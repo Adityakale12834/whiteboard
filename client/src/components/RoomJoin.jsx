@@ -24,7 +24,7 @@ const RoomJoin = () => {
     const trimmedCode = roomCode.trim();
 
     if (!isValidRoomCode(trimmedCode)) {
-      setError("Room code must be 6–8 alphanumeric characters");
+      setError("⚠ Room code must be 6–8 alphanumeric characters");
       return;
     }
 
@@ -37,13 +37,15 @@ const RoomJoin = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen  bg-gray-100">
-      <div className="bg-black/60 backdrop-blur-sm p-6 rounded shadow-lg w-full  max-w-sm border-gray-900 border">
-        <h2 className="text-xl font-bold mb-4 text-center text-white">
+    <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800">
+      <div className="bg-gray-800/70 backdrop-blur-lg p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-700">
+        {/* Title */}
+        <h2 className="text-2xl font-bold mb-6 text-center bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent animate-pulse">
           Join a Whiteboard Room
         </h2>
 
-        <form onSubmit={handleJoin} className="flex flex-col">
+        {/* Form */}
+        <form onSubmit={handleJoin} className="flex flex-col gap-4">
           <input
             type="text"
             placeholder="Enter Room Code"
@@ -52,7 +54,7 @@ const RoomJoin = () => {
               setRoomCode(e.target.value);
               setError("");
             }}
-            className="border p-2 rounded mb-4 focus:outline-none focus:ring"
+            className="border border-gray-600 bg-gray-900 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             maxLength={8}
             required
             disabled={loading}
@@ -60,23 +62,33 @@ const RoomJoin = () => {
 
           <button
             type="submit"
-            className="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-500 transition disabled:opacity-50"
+            className="bg-gradient-to-r from-indigo-500 to-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:scale-105 transition disabled:opacity-50"
             disabled={loading}
           >
-            {loading ? "Joining..." : "Join Room"}
+            {loading ? "Joining..." : "🚀 Join Room"}
           </button>
         </form>
-        <div className="flex items-center justify-center">
-          <button
-            onClick={handleCreateRoom}
-            className="mt-3 bg-blue-900 text-white w-full px-4 py-2 rounded hover:bg-blue-600 transition"
-          >
-            Create New Room
-          </button>
+
+        {/* Divider */}
+        <div className="my-4 flex items-center">
+          <hr className="flex-grow border-gray-600" />
+          <span className="px-2 text-gray-400 text-sm">or</span>
+          <hr className="flex-grow border-gray-600" />
         </div>
 
+        {/* Create Room Button */}
+        <button
+          onClick={handleCreateRoom}
+          className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-lg shadow-md hover:scale-105 transition"
+        >
+          ➕ Create New Room
+        </button>
+
+        {/* Error Message */}
         {error && (
-          <p className="text-red-500 mt-2 text-sm text-center">{error}</p>
+          <p className="text-red-400 mt-3 text-sm text-center animate-bounce">
+            {error}
+          </p>
         )}
       </div>
     </div>

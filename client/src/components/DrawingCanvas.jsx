@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
 
 const DrawingCanvas = ({ socket, roomId, color, strokeWidth, tool }) => {
   const canvasRef = useRef();
@@ -22,18 +22,38 @@ const DrawingCanvas = ({ socket, roomId, color, strokeWidth, tool }) => {
       const { width, height } = canvas.parentElement.getBoundingClientRect();
       canvas.width = width;
       canvas.height = height;
+
+      // Optional: subtle grid background
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#111"; // dark background
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.strokeStyle = "rgba(255,255,255,0.05)";
+      ctx.lineWidth = 1;
+      for (let x = 0; x < canvas.width; x += 25) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+      for (let y = 0; y < canvas.height; y += 25) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
     };
 
     resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener("resize", resizeCanvas);
 
-    const ctx = canvas.getContext('2d');
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
+    const ctx = canvas.getContext("2d");
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
     ctxRef.current = ctx;
 
     return () => {
-      window.removeEventListener('resize', resizeCanvas);
+      window.removeEventListener("resize", resizeCanvas);
     };
   }, []);
 
@@ -45,11 +65,11 @@ const DrawingCanvas = ({ socket, roomId, color, strokeWidth, tool }) => {
     const ctx = ctxRef.current;
     ctx.beginPath();
     ctx.moveTo(offsetX, offsetY);
-    ctx.strokeStyle = tool === 'eraser' ? '#fff' : colorRef.current;
+    ctx.strokeStyle = tool === "eraser" ? "#111" : colorRef.current;
     ctx.lineWidth = widthRef.current;
     setDrawing(true);
 
-    socket.emit('draw-start', {
+    socket.emit("draw-start", {
       roomId,
       offsetX,
       offsetY,
@@ -66,7 +86,7 @@ const DrawingCanvas = ({ socket, roomId, color, strokeWidth, tool }) => {
     ctx.lineTo(offsetX, offsetY);
     ctx.stroke();
 
-    socket.emit('draw-move', { roomId, offsetX, offsetY });
+    socket.emit("draw-move", { roomId, offsetX, offsetY });
   };
 
   const endDrawing = () => {
@@ -75,7 +95,7 @@ const DrawingCanvas = ({ socket, roomId, color, strokeWidth, tool }) => {
     ctxRef.current.closePath();
     setDrawing(false);
 
-    socket.emit('draw-end', { roomId });
+    socket.emit("draw-end", { roomId });
   };
 
   // Incoming socket events
@@ -105,16 +125,16 @@ const DrawingCanvas = ({ socket, roomId, color, strokeWidth, tool }) => {
       ctxRef.current.clearRect(0, 0, canvas.width, canvas.height);
     };
 
-    socket.on('draw-start', handleDrawStart);
-    socket.on('draw-move', handleDrawMove);
-    socket.on('draw-end', handleDrawEnd);
-    socket.on('clear-canvas', handleClearCanvas);
+    socket.on("draw-start", handleDrawStart);
+    socket.on("draw-move", handleDrawMove);
+    socket.on("draw-end", handleDrawEnd);
+    socket.on("clear-canvas", handleClearCanvas);
 
     return () => {
-      socket.off('draw-start', handleDrawStart);
-      socket.off('draw-move', handleDrawMove);
-      socket.off('draw-end', handleDrawEnd);
-      socket.off('clear-canvas', handleClearCanvas);
+      socket.off("draw-start", handleDrawStart);
+      socket.off("draw-move", handleDrawMove);
+      socket.off("draw-end", handleDrawEnd);
+      socket.off("clear-canvas", handleClearCanvas);
     };
   }, [socket, roomId]);
 
@@ -125,7 +145,7 @@ const DrawingCanvas = ({ socket, roomId, color, strokeWidth, tool }) => {
       onMouseMove={draw}
       onMouseUp={endDrawing}
       onMouseLeave={endDrawing}
-      className="absolute inset-0 z-0"
+      className="absolute inset-0 z-0 cursor-crosshair animate-fadeIn"
     />
   );
 };
